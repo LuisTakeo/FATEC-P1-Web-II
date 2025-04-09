@@ -37,6 +37,7 @@
         <input type="password" id="senha" placeholder="Insira a senha do Usuário">
 
         <input type="button" value="Confirmar" class="btn" onclick="editarUsuario()" />
+        <input type="button" value="Deletar" class="btn btn-danger" onclick="deletarUsuario()" />
     </form>
 </div>
 
@@ -74,6 +75,7 @@
     const nome = document.getElementById('nome').value;
     const email = document.getElementById('email').value;
     const senha = document.getElementById('senha').value;
+
     if (!usuarioId || !nome || !email || !senha) {
       alert('Por favor, preencha todos os campos corretamente.');
       return;
@@ -88,7 +90,7 @@
         body: JSON.stringify({
           nome: nome,
           email: email,
-          senha: senha // Inclui a permissão no corpo da requisição
+          senha: senha,
         }),
       });
 
@@ -101,6 +103,37 @@
     } catch (error) {
       console.error('Erro ao editar usuário:', error);
       alert('Erro ao editar o usuário. Tente novamente.');
+    }
+  }
+
+  // Função para deletar o usuário
+  async function deletarUsuario() {
+    const usuarioId = document.getElementById('usuario').value; // ID do usuário selecionado
+
+    if (!usuarioId) {
+      alert('Por favor, selecione um usuário para deletar.');
+      return;
+    }
+
+    const confirmacao = confirm('Tem certeza de que deseja deletar este usuário?');
+    if (!confirmacao) {
+      return; // Cancela a exclusão se o usuário não confirmar
+    }
+
+    try {
+      const response = await fetch(`http://127.0.0.1:8000/usuarios/${usuarioId}`, {
+        method: 'DELETE',
+      });
+
+      if (!response.ok) {
+        throw new Error(`Erro: ${response.status}`);
+      }
+
+      alert('Usuário deletado com sucesso!');
+      location.reload(); // Recarrega a página para atualizar a lista de usuários
+    } catch (error) {
+      console.error('Erro ao deletar usuário:', error);
+      alert('Erro ao deletar o usuário. Tente novamente.');
     }
   }
 
